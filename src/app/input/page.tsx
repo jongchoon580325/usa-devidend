@@ -322,7 +322,7 @@ export default function InputPage() {
         <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">ETF/배당 포트폴리오 자료입력</h1>
         <p className="text-gray-300 text-base mb-4">포트폴리오에 추가할 ETF/주식의 정보를 입력하세요.</p>
         {/* 모바일 안내 메시지 - 항상 표시 */}
-        <div className="text-yellow-300 text-sm mb-4 font-semibold">(프로폴리오 투자예산($) 입력 후 아래로 스크롤하여 '티커명'을 입력하며 '주당월배당금($)'까지만 입력후 엔터를 누르세요.)</div>
+        <div className="text-yellow-300 text-sm mb-4 font-semibold">(프로폴리오 투자예산($) 입력 후 아래로 스크롤하여 &apos;티커명&apos;을 입력하며 &apos;주당월배당금($)&apos;까지만 입력후 엔터를 누르세요.)</div>
         <hr className="border-t border-gray-500" />
       </div>
       {/* 반응형: 모바일은 flex-col, 데스크탑은 flex-row */}
