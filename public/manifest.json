@@ -1,0 +1,22 @@
+{
+  "name": "Smart Dividend Portfolio",
+  "short_name": "DividendPortfolio",
+  "description": "미국 ETF/배당주 포트폴리오 관리 PWA",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#181e29",
+  "theme_color": "#facc15",
+  "icons": [
+    {
+      "src": "/usa_etf_dividend.ico",
+      "sizes": "48x48 72x72 96x96 128x128 256x256 512x512",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/open_graph_image.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+} 
