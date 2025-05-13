@@ -51,6 +51,7 @@ export default function InputPage() {
   const [modalMsg, setModalMsg] = useState("");
   // 남은 투자 금액 상태
   const [remain, setRemain] = useState({ usd: '', krw: '' });
+  const [isMobile, setIsMobile] = useState(false);
 
   // right 값이 변경될 때마다 localStorage에 저장
   useEffect(() => {
@@ -307,16 +308,122 @@ export default function InputPage() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [modalOpen]);
 
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 640);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   return (
     <div className="w-full flex flex-col">
       {/* 페이지 타이틀 및 설명 */}
       <div className="mb-8">
         <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">ETF/배당 포트폴리오 자료입력</h1>
         <p className="text-gray-300 text-base mb-4">포트폴리오에 추가할 ETF/주식의 정보를 입력하세요.</p>
+        {/* 모바일 안내 메시지 */}
+        {isMobile && (
+          <div className="text-yellow-300 text-sm mb-4 font-semibold">(프로폴리오 투자예산($) 입력 후 아래로 스크롤하여 &apos;티커명&apos;을 입력하며 &apos;주당월배당금($)&apos;까지만 입력후 엔터를 누르세요.)</div>
+        )}
         <hr className="border-t border-gray-500" />
       </div>
-      <div className="flex flex-row gap-8">
-        {/* 왼쪽(5) */}
+      {/* 반응형: 모바일은 flex-col, 데스크탑은 flex-row */}
+      <div className="flex flex-col sm:flex-row gap-8">
+        {/* 왼쪽(5) - 포트폴리오 투자 정보 */}
+        <div className="flex-1 min-w-0">
+          <h2 className="text-xl font-semibold text-white mb-10">포트폴리오 투자 정보</h2>
+          {/* 1단 */}
+          <div className="flex gap-4 mb-12">
+            <div className="flex-1">
+              <div className="text-sm text-white mb-1">포트폴리오 투자 예산($)</div>
+              <input
+                name="totalUsd"
+                value={right.totalUsd ? `$${right.totalUsd}` : ''}
+                onChange={handleRightChange}
+                placeholder="포트폴리오 전체자산 입력"
+                className="input-custom w-full px-3 py-2 text-gray-100 text-sm placeholder-gray-400 text-right outline-none border-yellow-400"
+                autoComplete="off"
+                inputMode="numeric"
+              />
+            </div>
+            <div className="flex-1">
+              <div className="text-sm text-white mb-1">전체 투자 자산(₩)</div>
+              <input
+                name="totalKrw"
+                value={right.totalKrw ? `₩${right.totalKrw}` : ''}
+                readOnly
+                placeholder="원화 자산 자동입력"
+                className="input-custom w-full px-3 py-2 text-gray-100 text-sm placeholder-gray-400 text-right outline-none bg-gray-700"
+              />
+            </div>
+          </div>
+          {/* 2단 */}
+          <div className="flex gap-4 mb-12">
+            <div className="flex-1">
+              <div className="text-sm text-white mb-1">남은 투자 금액($)</div>
+              <input
+                name="remainUsd"
+                value={remain.usd ? `$${remain.usd}` : ''}
+                readOnly
+                placeholder="남은 달러 투자 금액($)"
+                className="input-custom w-full px-3 py-2 text-gray-100 text-sm placeholder-gray-400 text-right outline-none bg-gray-700"
+              />
+            </div>
+            <div className="flex-1">
+              <div className="text-sm text-white mb-1">남은 투자 금액(₩)</div>
+              <input
+                name="remainKrw"
+                value={remain.krw ? `₩${remain.krw}` : ''}
+                readOnly
+                placeholder="남은 원화 투자 금액(₩)"
+                className="input-custom w-full px-3 py-2 text-gray-100 text-sm placeholder-gray-400 text-right outline-none bg-gray-700"
+              />
+            </div>
+          </div>
+          {/* 3단 */}
+          <div className="flex gap-4 mb-12">
+            <div className="flex-1">
+              <div className="text-sm text-white mb-1">원/달러 환율(₩/$)</div>
+              <input
+                name="fx"
+                value={right.fx ? `₩${right.fx}` : ''}
+                onChange={handleRightChange}
+                placeholder="1,400"
+                className="input-custom w-full px-3 py-2 text-yellow-400 text-sm placeholder-gray-400 text-right outline-none"
+                autoComplete="off"
+                inputMode="numeric"
+              />
+            </div>
+            <div className="flex-1">
+              <div className="text-sm text-white mb-1">배당세액(%)</div>
+              <input
+                name="tax"
+                value={right.tax ? `${right.tax}%` : ''}
+                onChange={handleRightChange}
+                placeholder="0.154"
+                className="input-custom w-full px-3 py-2 text-yellow-400 text-sm placeholder-gray-400 text-right outline-none"
+                autoComplete="off"
+                inputMode="decimal"
+              />
+            </div>
+          </div>
+          {/* 오른쪽 섹션 하단 회색 점선 구분선 */}
+          <div className="w-full border-t border-dotted border-gray-400 my-8" />
+          {/* 안내 박스 */}
+          <div className="w-full border border-gray-300 rounded-[15px] p-6 mt-6 bg-transparent text-white">
+            <div className="text-lg font-bold mb-2">포트폴리오 작성법 안내</div>
+            <div className="whitespace-pre-line text-sm leading-relaxed">
+              {`- 다음 순서대로 입력하세요.
+1. "포트폴리오 투자 예산($)" 입력박스에 원하시는 전체 투자금을 입력하세요.
+2. "원/달러 환율(₩/$)" 의 입력박스에 '현재 환율 금액'을 입력하세요.
+3. "티커명 신규 입력" 의 "티커명"을 영어 문자로 입력하신 후 '현재 주가, 수량, 주당 월 배당금($)'까지만 입력하신 후 '엔터, 또는 저장' 버튼을 누르시면 됩니다.
+4. 입력된 자료는 "자료현황" 페이지에서 확인하시면 됩니다.`}
+            </div>
+          </div>
+        </div>
+        {/* 중앙 세로 점선 구분선: 모바일에서는 숨김 */}
+        <div className="border-l-2 border-dotted border-gray-400 mx-2 hidden sm:block" />
+        {/* 오른쪽(5) - 티커명 신규 입력 */}
         <div className="flex-1 min-w-0">
           <h2 className="text-xl font-semibold text-white mb-10">티커명 신규 입력</h2>
           {/* 1단 */}
@@ -494,100 +601,6 @@ export default function InputPage() {
             >
               초기화
             </button>
-          </div>
-        </div>
-        {/* 중앙 세로 점선 구분선 */}
-        <div className="border-l-2 border-dotted border-gray-400 mx-2" />
-        {/* 오른쪽(5) */}
-        <div className="flex-1 min-w-0">
-          <h2 className="text-xl font-semibold text-white mb-10">포트폴리오 투자 정보</h2>
-          {/* 1단 */}
-          <div className="flex gap-4 mb-12">
-            <div className="flex-1">
-              <div className="text-sm text-white mb-1">포트폴리오 투자 예산($)</div>
-              <input
-                name="totalUsd"
-                value={right.totalUsd ? `$${right.totalUsd}` : ''}
-                onChange={handleRightChange}
-                placeholder="포트폴리오 전체자산 입력"
-                className="input-custom w-full px-3 py-2 text-gray-100 text-sm placeholder-gray-400 text-right outline-none border-yellow-400"
-                autoComplete="off"
-                inputMode="numeric"
-              />
-            </div>
-            <div className="flex-1">
-              <div className="text-sm text-white mb-1">전체 투자 자산(₩)</div>
-              <input
-                name="totalKrw"
-                value={right.totalKrw ? `₩${right.totalKrw}` : ''}
-                readOnly
-                placeholder="원화 자산 자동입력"
-                className="input-custom w-full px-3 py-2 text-gray-100 text-sm placeholder-gray-400 text-right outline-none bg-gray-700"
-              />
-            </div>
-          </div>
-          {/* 2단 */}
-          <div className="flex gap-4 mb-12">
-            <div className="flex-1">
-              <div className="text-sm text-white mb-1">남은 투자 금액($)</div>
-              <input
-                name="remainUsd"
-                value={remain.usd ? `$${remain.usd}` : ''}
-                readOnly
-                placeholder="남은 달러 투자 금액($)"
-                className="input-custom w-full px-3 py-2 text-gray-100 text-sm placeholder-gray-400 text-right outline-none bg-gray-700"
-              />
-            </div>
-            <div className="flex-1">
-              <div className="text-sm text-white mb-1">남은 투자 금액(₩)</div>
-              <input
-                name="remainKrw"
-                value={remain.krw ? `₩${remain.krw}` : ''}
-                readOnly
-                placeholder="남은 원화 투자 금액(₩)"
-                className="input-custom w-full px-3 py-2 text-gray-100 text-sm placeholder-gray-400 text-right outline-none bg-gray-700"
-              />
-            </div>
-          </div>
-          {/* 3단 */}
-          <div className="flex gap-4 mb-12">
-            <div className="flex-1">
-              <div className="text-sm text-white mb-1">원/달러 환율(₩/$)</div>
-              <input
-                name="fx"
-                value={right.fx ? `₩${right.fx}` : ''}
-                onChange={handleRightChange}
-                placeholder="1,400"
-                className="input-custom w-full px-3 py-2 text-yellow-400 text-sm placeholder-gray-400 text-right outline-none"
-                autoComplete="off"
-                inputMode="numeric"
-              />
-            </div>
-            <div className="flex-1">
-              <div className="text-sm text-white mb-1">배당세액(%)</div>
-              <input
-                name="tax"
-                value={right.tax ? `${right.tax}%` : ''}
-                onChange={handleRightChange}
-                placeholder="0.154"
-                className="input-custom w-full px-3 py-2 text-yellow-400 text-sm placeholder-gray-400 text-right outline-none"
-                autoComplete="off"
-                inputMode="decimal"
-              />
-            </div>
-          </div>
-          {/* 오른쪽 섹션 하단 회색 점선 구분선 */}
-          <div className="w-full border-t border-dotted border-gray-400 my-8" />
-          {/* 안내 박스 */}
-          <div className="w-full border border-gray-300 rounded-[15px] p-6 mt-6 bg-transparent text-white">
-            <div className="text-lg font-bold mb-2">포트폴리오 작성법 안내</div>
-            <div className="whitespace-pre-line text-sm leading-relaxed">
-              {`- 다음 순서대로 입력하세요.
-1. "포트폴리오 투자 예산($)" 입력박스에 원하시는 전체 투자금을 입력하세요.
-2. "원/달러 환율(₩/$)" 의 입력박스에 '현재 환율 금액'을 입력하세요.
-3. "티커명 신규 입력" 의 "티커명"을 영어 문자로 입력하신 후 '현재 주가, 수량, 주당 월 배당금($)'까지만 입력하신 후 '엔터, 또는 저장' 버튼을 누르시면 됩니다.
-4. 입력된 자료는 "자료현황" 페이지에서 확인하시면 됩니다.`}
-            </div>
           </div>
         </div>
       </div>
