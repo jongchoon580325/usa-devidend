@@ -31,6 +31,8 @@ export default function RootLayout({
         <meta property="og:image" content="/open_graph_image.png" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
+        {/* Tailwind output.css가 필요하다면 아래 한 줄 추가 (일반적으로 필요 없음) */}
+        {/* <link rel="stylesheet" href="/output.css" /> */}
         {/* PWA 서비스워커 등록 */}
         <script dangerouslySetInnerHTML={{ __html: `if ('serviceWorker' in navigator) { window.addEventListener('load', function() { navigator.serviceWorker.register('/sw.js'); }); }` }} />
       </head>

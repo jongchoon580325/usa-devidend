@@ -321,10 +321,8 @@ export default function InputPage() {
       <div className="mb-8">
         <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">ETF/배당 포트폴리오 자료입력</h1>
         <p className="text-gray-300 text-base mb-4">포트폴리오에 추가할 ETF/주식의 정보를 입력하세요.</p>
-        {/* 모바일 안내 메시지 */}
-        {isMobile && (
-          <div className="text-yellow-300 text-sm mb-4 font-semibold">(프로폴리오 투자예산($) 입력 후 아래로 스크롤하여 &apos;티커명&apos;을 입력하며 &apos;주당월배당금($)&apos;까지만 입력후 엔터를 누르세요.)</div>
-        )}
+        {/* 모바일 안내 메시지 - 항상 표시 */}
+        <div className="text-yellow-300 text-sm mb-4 font-semibold">(프로폴리오 투자예산($) 입력 후 아래로 스크롤하여 '티커명'을 입력하며 '주당월배당금($)'까지만 입력후 엔터를 누르세요.)</div>
         <hr className="border-t border-gray-500" />
       </div>
       {/* 반응형: 모바일은 flex-col, 데스크탑은 flex-row */}
@@ -426,7 +424,7 @@ export default function InputPage() {
         {/* 오른쪽(5) - 티커명 신규 입력 */}
         <div className="flex-1 min-w-0">
           <h2 className="text-xl font-semibold text-white mb-10">티커명 신규 입력</h2>
-          {/* 1단 */}
+          {/* 1단: 티커명, 현재주가 */}
           <div className="flex gap-4 mb-12">
             <div className="w-1/2">
               <div className="text-sm text-white mb-1">티커명</div>
@@ -454,7 +452,7 @@ export default function InputPage() {
               />
             </div>
           </div>
-          {/* 2단 */}
+          {/* 2단: 수량, 주당월배당금 */}
           <div className="flex gap-4 mb-12">
             <div className="w-1/2">
               <div className="text-sm text-white mb-1">수량</div>
@@ -486,34 +484,37 @@ export default function InputPage() {
               />
             </div>
           </div>
-          {/* 3단 */}
+          {/* 3단: 투자금($), 투자금(₩) */}
           <div className="flex gap-4 mb-12">
-            <div className="flex-1">
+            <div className="w-1/2">
               <div className="text-sm text-white mb-1">투자금($)</div>
               <input
                 name="investUsd"
                 value={calcInvestUsd() ? `$${calcInvestUsd()}` : ''}
                 readOnly
                 placeholder="투자금($)"
-                className="input-custom flex-1 px-3 py-2 text-gray-100 text-sm placeholder-gray-400 text-right outline-none"
+                className="input-custom w-full px-3 py-2 text-gray-100 text-sm placeholder-gray-400 text-right outline-none"
                 autoComplete="off"
                 inputMode="numeric"
               />
             </div>
-            <div className="flex-1">
+            <div className="w-1/2">
               <div className="text-sm text-white mb-1">투자금(₩)</div>
               <input
                 name="investKrw"
                 value={calcInvestKrw() ? `₩${calcInvestKrw()}` : ''}
                 readOnly
                 placeholder="투자금(₩)"
-                className="input-custom flex-1 px-3 py-2 text-gray-100 text-sm placeholder-gray-400 text-right outline-none"
+                className="input-custom w-full px-3 py-2 text-gray-100 text-sm placeholder-gray-400 text-right outline-none"
                 autoComplete="off"
                 inputMode="numeric"
               />
             </div>
-            <div className="flex-1">
-              <div className="text-sm text-white mb-1">투자 비중(%)</div>
+          </div>
+          {/* 4단: 투자비중(%) */}
+          <div className="flex gap-4 mb-12">
+            <div className="w-full">
+              <div className="text-sm text-white mb-1">투자비중(%)</div>
               <input
                 name="investRatioLeft"
                 value={(() => {
@@ -523,15 +524,15 @@ export default function InputPage() {
                   return Math.round((investUsd / totalUsd) * 100) + "%";
                 })()}
                 readOnly
-                placeholder="투자 비중(%)"
-                className="input-custom flex-1 px-3 py-2 text-gray-100 text-sm placeholder-gray-400 text-right outline-none"
+                placeholder="투자비중(%)"
+                className="input-custom w-full px-3 py-2 text-gray-100 text-sm placeholder-gray-400 text-right outline-none"
                 autoComplete="off"
                 inputMode="numeric"
                 tabIndex={0}
               />
             </div>
           </div>
-          {/* 4단 */}
+          {/* 5단: 월배당금($)세전, 월배당금(₩)세전 */}
           <div className="flex gap-4 mb-12">
             <div className="w-1/2">
               <div className="text-sm text-white mb-1">월 배당금($)세전</div>
@@ -558,7 +559,7 @@ export default function InputPage() {
               />
             </div>
           </div>
-          {/* 5단 */}
+          {/* 6단: 월배당금($)세후, 월배당금(₩)세후 */}
           <div className="flex gap-4 mb-12">
             <div className="w-1/2">
               <div className="text-sm text-white mb-1">월 배당금($)세후</div>
@@ -585,7 +586,7 @@ export default function InputPage() {
               />
             </div>
           </div>
-          {/* 6단: 버튼 */}
+          {/* 버튼 */}
           <div className="flex gap-4 mt-12">
             <button
               type="button"
