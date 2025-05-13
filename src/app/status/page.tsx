@@ -166,7 +166,7 @@ export default function StatusPage() {
       <h1 className="page-title">자료현황</h1>
       <div className="page-desc">입력된 포트폴리오 및 배당 데이터 현황을 확인할 수 있습니다.</div>
       <div className="divider" />
-      {/* 자료현황 테이블 */}
+      {/* 2단: 테이블 리스트 */}
       <div className="overflow-x-auto mt-8">
         <table className="min-w-full bg-gray-800 rounded-lg overflow-hidden">
           <thead>
@@ -229,6 +229,158 @@ export default function StatusPage() {
           </tfoot>
         </table>
       </div>
+      {/* 3단: 포트폴리오 저장 */}
+      <div className="w-full bg-gray-800 rounded-lg p-8 mt-8">
+        <h2 className="text-xl font-bold text-white mb-4">포트폴리오 저장</h2>
+        {/* 파일명 입력 및 저장, 파일 목록, 파일 보기 모달 ... */}
+        <div className="flex gap-2 mb-6">
+          <input
+            type="text"
+            value={fileName}
+            onChange={e => setFileName(e.target.value)}
+            onKeyDown={e => { if (e.key === 'Enter') handleFileSave(); }}
+            placeholder="파일명을 입력하세요"
+            className="flex-1 px-3 py-2 rounded border border-gray-500 bg-gray-900 text-white outline-none"
+          />
+          <button
+            className="px-5 py-2 bg-green-600 hover:bg-green-700 text-white rounded font-semibold"
+            onClick={handleFileSave}
+          >저장</button>
+        </div>
+        <table className="min-w-full bg-gray-900 rounded-lg overflow-hidden">
+          <thead>
+            <tr>
+              <th className="px-4 py-2 text-left text-sm font-bold text-yellow-300">파일명</th>
+              <th className="px-4 py-2 text-left text-sm font-bold text-yellow-300">저장일시</th>
+              <th className="px-4 py-2 text-center text-sm font-bold text-yellow-300">관리</th>
+            </tr>
+          </thead>
+          <tbody>
+            {fileList.length === 0 && (
+              <tr><td colSpan={3} className="text-center text-gray-400 py-6">저장된 파일이 없습니다.</td></tr>
+            )}
+            {fileList.map((file) => (
+              <tr key={file.id} className="hover:bg-gray-800 transition">
+                <td className="px-4 py-2">
+                  {editFileId === file.id ? (
+                    <input
+                      value={editFileName}
+                      onChange={e => setEditFileName(e.target.value)}
+                      onKeyDown={e => { if (e.key === 'Enter') handleFileNameSave(file.id); }}
+                      className="px-2 py-1 rounded bg-gray-700 text-white"
+                      autoFocus
+                    />
+                  ) : (
+                    <span>{file.name}</span>
+                  )}
+                </td>
+                <td className="px-4 py-2 text-gray-300">{file.savedAt}</td>
+                <td className="px-4 py-2 text-center">
+                  {editFileId === file.id ? (
+                    <button className="px-3 py-1 bg-green-600 text-white rounded text-xs hover:bg-green-700 mr-2" onClick={() => handleFileNameSave(file.id)}>저장</button>
+                  ) : (
+                    <button className="px-3 py-1 bg-blue-600 text-white rounded text-xs hover:bg-blue-700 mr-2" onClick={() => handleFileNameEdit(file.id, file.name)}>파일변경</button>
+                  )}
+                  <button className="px-3 py-1 bg-gray-500 text-white rounded text-xs hover:bg-gray-600 mr-2" onClick={() => handleFileView(file)}>보기</button>
+                  <button className="px-3 py-1 bg-red-600 text-white rounded text-xs hover:bg-red-700" onClick={() => handleFileDelete(file.id)}>삭제</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {viewFile && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50">
+            <div className="bg-white text-black rounded-lg p-8 shadow-lg min-w-[900px] max-w-4xl max-h-[80vh] overflow-auto animate-fade-in">
+              <div className="flex justify-between items-center mb-4">
+                <div className="text-lg font-bold">{viewFile.name} (저장일시: {viewFile.savedAt})</div>
+                <button className="px-4 py-1 bg-blue-600 text-white rounded" onClick={closeViewFile}>닫기</button>
+              </div>
+              <table className="min-w-full bg-gray-100 rounded-lg overflow-hidden text-xs">
+                <thead>
+                  <tr>
+                    <th className="px-2 py-1 border-b">티커명</th>
+                    <th className="px-2 py-1 border-b">현재주가</th>
+                    <th className="px-2 py-1 border-b">수량</th>
+                    <th className="px-2 py-1 border-b">주당배당금</th>
+                    <th className="px-2 py-1 border-b">달러투자금</th>
+                    <th className="px-2 py-1 border-b">원화투자금</th>
+                    <th className="px-2 py-1 border-b">투자비중</th>
+                    <th className="px-2 py-1 border-b">세전월배당$</th>
+                    <th className="px-2 py-1 border-b">세전월배당₩</th>
+                    <th className="px-2 py-1 border-b">세후월배당$</th>
+                    <th className="px-2 py-1 border-b">세후월배당₩</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {viewFile.data.length === 0 && (
+                    <tr><td colSpan={11} className="text-center text-gray-400 py-4">데이터가 없습니다.</td></tr>
+                  )}
+                  {viewFile.data.map((row: any, idx: number) => (
+                    <tr key={idx} className="hover:bg-gray-200">
+                      <td className="px-2 py-1">{row.ticker}</td>
+                      <td className="px-2 py-1 text-right">{row.price}</td>
+                      <td className="px-2 py-1 text-right">{row.quantity}</td>
+                      <td className="px-2 py-1 text-right">{row.monthlyDividend ?? row.dividend}</td>
+                      <td className="px-2 py-1 text-right">{row.investUsd ?? row.investUsd}</td>
+                      <td className="px-2 py-1 text-right">{row.investKrw ?? row.investKrw}</td>
+                      <td className="px-2 py-1 text-right">{row.investRatio ?? row.ratio}</td>
+                      <td className="px-2 py-1 text-right">{row.monthlyDividendUsdPre ?? row.preDivUsd}</td>
+                      <td className="px-2 py-1 text-right">{row.monthlyDividendKrwPre ?? row.preDivKrw}</td>
+                      <td className="px-2 py-1 text-right">{row.monthlyDividendUsdPost ?? row.postDivUsd}</td>
+                      <td className="px-2 py-1 text-right">{row.monthlyDividendKrwPost ?? row.postDivKrw}</td>
+                    </tr>
+                  ))}
+                </tbody>
+                <tfoot>
+                  <tr className="bg-gray-200">
+                    <td className="px-2 py-1 font-bold">합계</td>
+                    <td className="px-2 py-1 text-right font-bold"></td>
+                    <td className="px-2 py-1 text-right font-bold">{viewFile.data.reduce((a: number, r: any) => a + (parseFloat(String(r.quantity).replace(/[^\d.-]/g, '')) || 0), 0).toLocaleString()}</td>
+                    <td className="px-2 py-1 text-right font-bold"></td>
+                    <td className="px-2 py-1 text-right font-bold">{viewFile.data.reduce((a: number, r: any) => a + (parseFloat(String(r.investUsd ?? r.investUsd).replace(/[^\d.-]/g, '')) || 0), 0).toLocaleString()}</td>
+                    <td className="px-2 py-1 text-right font-bold">{viewFile.data.reduce((a: number, r: any) => a + (parseFloat(String(r.investKrw ?? r.investKrw).replace(/[^\d.-]/g, '')) || 0), 0).toLocaleString()}</td>
+                    <td className="px-2 py-1 text-right font-bold">{(() => {
+                      const total = viewFile.data.reduce((a: number, r: any) => {
+                        const val = r.investRatio ?? r.ratio;
+                        if (!val) return a;
+                        const num = typeof val === 'string' ? parseFloat(val.replace(/[^\d.-]/g, '')) : Number(val);
+                        return a + (isNaN(num) ? 0 : num);
+                      }, 0);
+                      return total ? total.toLocaleString() + '%' : '';
+                    })()}</td>
+                    <td className="px-2 py-1 text-right font-bold">{viewFile.data.reduce((a: number, r: any) => a + (parseFloat(String(r.monthlyDividendUsdPre ?? r.preDivUsd).replace(/[^\d.-]/g, '')) || 0), 0).toLocaleString()}</td>
+                    <td className="px-2 py-1 text-right font-bold">{viewFile.data.reduce((a: number, r: any) => a + (parseFloat(String(r.monthlyDividendKrwPre ?? r.preDivKrw).replace(/[^\d.-]/g, '')) || 0), 0).toLocaleString()}</td>
+                    <td className="px-2 py-1 text-right font-bold">{viewFile.data.reduce((a: number, r: any) => a + (parseFloat(String(r.monthlyDividendUsdPost ?? r.postDivUsd).replace(/[^\d.-]/g, '')) || 0), 0).toLocaleString()}</td>
+                    <td className="px-2 py-1 text-right font-bold">{viewFile.data.reduce((a: number, r: any) => a + (parseFloat(String(r.monthlyDividendKrwPost ?? r.postDivKrw).replace(/[^\d.-]/g, '')) || 0), 0).toLocaleString()}</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        )}
+      </div>
+      {/* 4단: 포트폴리오 챠트(투자비중/세후월배당) */}
+      <div className="w-full mt-8">
+        {/* 투자비중 차트 */}
+        <div className="bg-gray-800 rounded-lg p-8 mb-4">
+          <h2 className="text-xl font-bold text-white mb-4">포트폴리오 챠트</h2>
+          <div className="bg-gray-900 rounded-lg p-6 flex flex-col items-center justify-center w-full">
+            <div className="text-base font-semibold text-white mb-4">티커명 대비 투자비중</div>
+            <div className="w-60 h-60 flex items-center justify-center">
+              <PortfolioPieChart data={chartDataRatio} />
+            </div>
+          </div>
+        </div>
+        {/* 세후월배당 차트 */}
+        <div className="bg-gray-800 rounded-lg p-8">
+          <div className="bg-gray-900 rounded-lg p-6 flex flex-col items-center justify-center w-full">
+            <div className="text-base font-semibold text-white mb-4">티커명 대비 세후월배당₩</div>
+            <div className="w-60 h-60 flex items-center justify-center">
+              <MonthlyDividendChart data={chartDataDividend} />
+            </div>
+          </div>
+        </div>
+      </div>
       {/* 예쁜 모달 */}
       {modal.open && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -250,165 +402,6 @@ export default function StatusPage() {
           </div>
         </div>
       )}
-      {/* 포트폴리오 저장/챠트 5:5 분할 섹션 */}
-      <div className="w-full flex flex-row gap-8 mt-16">
-        {/* 왼쪽 5 */}
-        <div className="flex-1 min-w-0 bg-gray-800 rounded-lg p-8">
-          <h2 className="text-xl font-bold text-white mb-4">포트폴리오 저장</h2>
-          {/* 파일명 입력 및 저장 */}
-          <div className="flex gap-2 mb-6">
-            <input
-              type="text"
-              value={fileName}
-              onChange={e => setFileName(e.target.value)}
-              onKeyDown={e => { if (e.key === 'Enter') handleFileSave(); }}
-              placeholder="파일명을 입력하세요"
-              className="flex-1 px-3 py-2 rounded border border-gray-500 bg-gray-900 text-white outline-none"
-            />
-            <button
-              className="px-5 py-2 bg-green-600 hover:bg-green-700 text-white rounded font-semibold"
-              onClick={handleFileSave}
-            >저장</button>
-          </div>
-          {/* 파일 목록 테이블 */}
-          <table className="min-w-full bg-gray-900 rounded-lg overflow-hidden">
-            <thead>
-              <tr>
-                <th className="px-4 py-2 text-left text-sm font-bold text-yellow-300">파일명</th>
-                <th className="px-4 py-2 text-left text-sm font-bold text-yellow-300">저장일시</th>
-                <th className="px-4 py-2 text-center text-sm font-bold text-yellow-300">관리</th>
-              </tr>
-            </thead>
-            <tbody>
-              {fileList.length === 0 && (
-                <tr><td colSpan={3} className="text-center text-gray-400 py-6">저장된 파일이 없습니다.</td></tr>
-              )}
-              {fileList.map((file) => (
-                <tr key={file.id} className="hover:bg-gray-800 transition">
-                  <td className="px-4 py-2">
-                    {editFileId === file.id ? (
-                      <input
-                        value={editFileName}
-                        onChange={e => setEditFileName(e.target.value)}
-                        onKeyDown={e => { if (e.key === 'Enter') handleFileNameSave(file.id); }}
-                        className="px-2 py-1 rounded bg-gray-700 text-white"
-                        autoFocus
-                      />
-                    ) : (
-                      <span>{file.name}</span>
-                    )}
-                  </td>
-                  <td className="px-4 py-2 text-gray-300">{file.savedAt}</td>
-                  <td className="px-4 py-2 text-center">
-                    {editFileId === file.id ? (
-                      <button className="px-3 py-1 bg-green-600 text-white rounded text-xs hover:bg-green-700 mr-2" onClick={() => handleFileNameSave(file.id)}>저장</button>
-                    ) : (
-                      <button className="px-3 py-1 bg-blue-600 text-white rounded text-xs hover:bg-blue-700 mr-2" onClick={() => handleFileNameEdit(file.id, file.name)}>파일변경</button>
-                    )}
-                    <button className="px-3 py-1 bg-gray-500 text-white rounded text-xs hover:bg-gray-600 mr-2" onClick={() => handleFileView(file)}>보기</button>
-                    <button className="px-3 py-1 bg-red-600 text-white rounded text-xs hover:bg-red-700" onClick={() => handleFileDelete(file.id)}>삭제</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          {/* 파일 보기 모달 */}
-          {viewFile && (
-            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50">
-              <div className="bg-white text-black rounded-lg p-8 shadow-lg min-w-[900px] max-w-4xl max-h-[80vh] overflow-auto animate-fade-in">
-                <div className="flex justify-between items-center mb-4">
-                  <div className="text-lg font-bold">{viewFile.name} (저장일시: {viewFile.savedAt})</div>
-                  <button className="px-4 py-1 bg-blue-600 text-white rounded" onClick={closeViewFile}>닫기</button>
-                </div>
-                {/* 테이블 뷰 */}
-                <table className="min-w-full bg-gray-100 rounded-lg overflow-hidden text-xs">
-                  <thead>
-                    <tr>
-                      <th className="px-2 py-1 border-b">티커명</th>
-                      <th className="px-2 py-1 border-b">현재주가</th>
-                      <th className="px-2 py-1 border-b">수량</th>
-                      <th className="px-2 py-1 border-b">주당배당금</th>
-                      <th className="px-2 py-1 border-b">달러투자금</th>
-                      <th className="px-2 py-1 border-b">원화투자금</th>
-                      <th className="px-2 py-1 border-b">투자비중</th>
-                      <th className="px-2 py-1 border-b">세전월배당$</th>
-                      <th className="px-2 py-1 border-b">세전월배당₩</th>
-                      <th className="px-2 py-1 border-b">세후월배당$</th>
-                      <th className="px-2 py-1 border-b">세후월배당₩</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {viewFile.data.length === 0 && (
-                      <tr><td colSpan={11} className="text-center text-gray-400 py-4">데이터가 없습니다.</td></tr>
-                    )}
-                    {viewFile.data.map((row: any, idx: number) => (
-                      <tr key={idx} className="hover:bg-gray-200">
-                        <td className="px-2 py-1">{row.ticker}</td>
-                        <td className="px-2 py-1 text-right">{row.price}</td>
-                        <td className="px-2 py-1 text-right">{row.quantity}</td>
-                        <td className="px-2 py-1 text-right">{row.monthlyDividend ?? row.dividend}</td>
-                        <td className="px-2 py-1 text-right">{row.investUsd ?? row.investUsd}</td>
-                        <td className="px-2 py-1 text-right">{row.investKrw ?? row.investKrw}</td>
-                        <td className="px-2 py-1 text-right">{row.investRatio ?? row.ratio}</td>
-                        <td className="px-2 py-1 text-right">{row.monthlyDividendUsdPre ?? row.preDivUsd}</td>
-                        <td className="px-2 py-1 text-right">{row.monthlyDividendKrwPre ?? row.preDivKrw}</td>
-                        <td className="px-2 py-1 text-right">{row.monthlyDividendUsdPost ?? row.postDivUsd}</td>
-                        <td className="px-2 py-1 text-right">{row.monthlyDividendKrwPost ?? row.postDivKrw}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                  {/* 합계 행 */}
-                  <tfoot>
-                    <tr className="bg-gray-200">
-                      <td className="px-2 py-1 font-bold">합계</td>
-                      <td className="px-2 py-1 text-right font-bold"></td>
-                      <td className="px-2 py-1 text-right font-bold">{viewFile.data.reduce((a: number, r: any) => a + (parseFloat(String(r.quantity).replace(/[^\d.-]/g, '')) || 0), 0).toLocaleString()}</td>
-                      <td className="px-2 py-1 text-right font-bold"></td>
-                      <td className="px-2 py-1 text-right font-bold">{viewFile.data.reduce((a: number, r: any) => a + (parseFloat(String(r.investUsd ?? r.investUsd).replace(/[^\d.-]/g, '')) || 0), 0).toLocaleString()}</td>
-                      <td className="px-2 py-1 text-right font-bold">{viewFile.data.reduce((a: number, r: any) => a + (parseFloat(String(r.investKrw ?? r.investKrw).replace(/[^\d.-]/g, '')) || 0), 0).toLocaleString()}</td>
-                      <td className="px-2 py-1 text-right font-bold">{(() => {
-                        const total = viewFile.data.reduce((a: number, r: any) => {
-                          const val = r.investRatio ?? r.ratio;
-                          if (!val) return a;
-                          const num = typeof val === 'string' ? parseFloat(val.replace(/[^\d.-]/g, '')) : Number(val);
-                          return a + (isNaN(num) ? 0 : num);
-                        }, 0);
-                        return total ? total.toLocaleString() + '%' : '';
-                      })()}</td>
-                      <td className="px-2 py-1 text-right font-bold">{viewFile.data.reduce((a: number, r: any) => a + (parseFloat(String(r.monthlyDividendUsdPre ?? r.preDivUsd).replace(/[^\d.-]/g, '')) || 0), 0).toLocaleString()}</td>
-                      <td className="px-2 py-1 text-right font-bold">{viewFile.data.reduce((a: number, r: any) => a + (parseFloat(String(r.monthlyDividendKrwPre ?? r.preDivKrw).replace(/[^\d.-]/g, '')) || 0), 0).toLocaleString()}</td>
-                      <td className="px-2 py-1 text-right font-bold">{viewFile.data.reduce((a: number, r: any) => a + (parseFloat(String(r.monthlyDividendUsdPost ?? r.postDivUsd).replace(/[^\d.-]/g, '')) || 0), 0).toLocaleString()}</td>
-                      <td className="px-2 py-1 text-right font-bold">{viewFile.data.reduce((a: number, r: any) => a + (parseFloat(String(r.monthlyDividendKrwPost ?? r.postDivKrw).replace(/[^\d.-]/g, '')) || 0), 0).toLocaleString()}</td>
-                    </tr>
-                  </tfoot>
-                </table>
-              </div>
-            </div>
-          )}
-        </div>
-        {/* 오른쪽 5 */}
-        <div className="flex-1 min-w-0 bg-gray-800 rounded-lg p-8">
-          <h2 className="text-xl font-bold text-white mb-4">포트폴리오 챠트</h2>
-          <div className="flex flex-row gap-8 w-full">
-            {/* 왼쪽: 티커명 대비 투자비중 */}
-            <div className="flex-1 bg-gray-900 rounded-lg p-6 flex flex-col items-center justify-center">
-              <div className="text-base font-semibold text-white mb-4">티커명 대비 투자비중</div>
-              {/* PortfolioPieChart 컴포넌트로 교체 */}
-              <div className="w-60 h-60 flex items-center justify-center">
-                <PortfolioPieChart data={chartDataRatio} />
-              </div>
-            </div>
-            {/* 오른쪽: 티커명 대비 세후월배당₩ */}
-            <div className="flex-1 bg-gray-900 rounded-lg p-6 flex flex-col items-center justify-center">
-              <div className="text-base font-semibold text-white mb-4">티커명 대비 세후월배당₩</div>
-              {/* MonthlyDividendChart 컴포넌트로 교체 */}
-              <div className="w-60 h-60 flex items-center justify-center">
-                <MonthlyDividendChart data={chartDataDividend} />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   )
 } 
