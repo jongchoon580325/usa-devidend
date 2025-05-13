@@ -93,7 +93,7 @@ export default function Home() {
     'bg-gray-800 rounded-xl p-6 flex flex-col items-center shadow relative transition-all duration-500 hover:shadow-[0_0_16px_#facc15] hover:ring-2 hover:ring-yellow-300/70';
 
   return (
-    <div className="w-full max-w-5xl mx-auto px-4 py-12">
+    <div className="w-full max-w-5xl mx-auto px-2 sm:px-4 py-6 sm:py-12">
       {/* 앱 소개 및 가치 제안 */}
       <section className="mb-12 text-center">
         <h1 className="text-3xl md:text-5xl font-bold text-yellow-300 mb-4 drop-shadow">Smart Dividend Portfolio</h1>
@@ -102,7 +102,7 @@ export default function Home() {
       </section>
 
       {/* 주요 기능 하이라이트 */}
-      <section className="mb-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <section className="mb-8 sm:mb-12 grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
         {/* 자료입력 카드 */}
         <div className={`${cardBase} relative`}
           ref={fw1.fireworkRef}
@@ -142,7 +142,7 @@ export default function Home() {
       </section>
 
       {/* 포트폴리오 작성법 가이드 */}
-      <section className="mb-12">
+      <section className="mb-8 sm:mb-12">
         <div className="border border-gray-300 rounded-2xl p-6 bg-gray-900/60 text-white">
           <div className="text-lg font-bold mb-2 text-yellow-200">포트폴리오 작성 가이드</div>
           <ul className="list-decimal list-inside text-sm leading-relaxed text-gray-200">
@@ -157,20 +157,20 @@ export default function Home() {
       </section>
 
       {/* 예시 데이터 시각화(실제 연동) */}
-      <section className="mb-12">
+      <section className="mb-8 sm:mb-12">
         <div className="text-lg font-bold text-white mb-4">
           포트폴리오 통계 미리보기
           <span className="ml-2 text-base font-normal text-yellow-200 align-middle">(마우스를 챠트 위에 올려 놓으면 통계숫자를 확인할 수 있습니다.)</span>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           {/* 투자비중 파이차트 */}
-          <div className="bg-gray-800 rounded-xl p-6 flex flex-col items-center justify-center min-h-[220px]">
+          <div className="bg-gray-800 rounded-xl p-4 sm:p-6 flex flex-col items-center justify-center min-h-[160px] sm:min-h-[220px]">
             <span className="text-2xl text-gray-300 mb-2">📈</span>
             <div className="text-gray-200 text-sm mb-1">투자 비중 파이차트</div>
             <PortfolioPieChart data={chartDataRatio} />
           </div>
           {/* 세후월배당₩ 파이차트 */}
-          <div className="bg-gray-800 rounded-xl p-6 flex flex-col items-center justify-center min-h-[220px]">
+          <div className="bg-gray-800 rounded-xl p-4 sm:p-6 flex flex-col items-center justify-center min-h-[160px] sm:min-h-[220px]">
             <span className="text-2xl text-gray-300 mb-2">🥧</span>
             <div className="text-gray-200 text-sm mb-1">월별 배당금 그래프</div>
             <MonthlyDividendChart data={chartDataDividend} />
@@ -179,7 +179,7 @@ export default function Home() {
       </section>
 
       {/* CTA 및 퀵링크 */}
-      <section className="text-center mt-16">
+      <section className="text-center mt-8 sm:mt-16">
         <Link href="/input" className="inline-block bg-yellow-400 hover:bg-yellow-300 text-gray-900 font-bold py-3 px-8 rounded-full text-lg shadow transition">지금 포트폴리오 시작하기</Link>
         <div className="mt-4 flex flex-wrap justify-center gap-4">
           <Link href="/input" className="text-blue-400 hover:underline text-sm">자료입력</Link>
