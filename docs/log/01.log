@@ -1,0 +1,8 @@
+App.jsx:20 
+            
+            
+           GET http://localhost:5173/src/components/PortfolioInputForm.jsx?t=1746839783976 net::ERR_ABORTED 500 (Internal Server Error)
+localhost/:1 Unchecked runtime.lastError: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received
+localhost/:1 Unchecked runtime.lastError: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received
+localhost/:1 Unchecked runtime.lastError: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received
+localhost/:1 Unchecked runtime.lastError: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received

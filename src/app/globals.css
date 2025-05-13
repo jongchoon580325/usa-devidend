@@ -1,27 +1,65 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss/base'; /* Tailwind CSS 기본 스타일 import */
+@import 'tailwindcss/components'; /* Tailwind CSS 컴포넌트 스타일 import */
+@import 'tailwindcss/utilities'; /* Tailwind CSS 유틸리티 import */
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --foreground-rgb: 0, 0, 0; /* 기본 글자색(RGB) */
+  --background-start-rgb: 214, 219, 220; /* 배경 그라데이션 시작 색상(RGB) */
+  --background-end-rgb: 255, 255, 255; /* 배경 그라데이션 끝 색상(RGB) */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --foreground-rgb: 255, 255, 255; /* 다크모드 글자색(RGB) */
+    --background-start-rgb: 0, 0, 0; /* 다크모드 배경 시작 색상(RGB) */
+    --background-end-rgb: 0, 0, 0; /* 다크모드 배경 끝 색상(RGB) */
   }
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
+  color: rgb(var(--foreground-rgb)); /* body 글자색 */
   background: linear-gradient(
       to bottom,
       transparent,
       rgb(var(--background-end-rgb))
     )
-    rgb(var(--background-start-rgb));
+    rgb(var(--background-start-rgb)); /* body 배경 그라데이션 */
+}
+
+/* 페이지 타이틀 스타일 */
+.page-title {
+  @apply text-3xl font-bold text-white text-left mb-2;
+}
+/* 부연설명 스타일 */
+.page-desc {
+  @apply text-lg text-white text-left mb-4;
+}
+/* 구분선 스타일 */
+.divider {
+  @apply w-[95vw] border-t border-dotted border-gray-400 my-4;
+}
+/* 위로가기 버튼 커스텀 (Tailwind로 대부분 처리) */
+/* 다크모드 지원은 Tailwind 유틸리티로 처리 */
+
+/* 입력필드 그룹 간격 조절 */
+.input-row {
+  margin-bottom: 30px; /* 원하는 px 값으로 조절 */
+}
+/* 사용 예시: <div className="flex gap-4 input-row"> ... </div> */
+
+/* 입력필드 기본 라운드 및 포커스 효과 (배경색은 Tailwind로만 적용) */
+.input-custom {
+  border-radius: 5px;
+  border-width: 1px;
+  transition: box-shadow 0.2s, border 0.2s;
+  background: none !important; /* 배경색 강제 제거 */
+}
+.input-custom:focus {
+  outline: none;
+  border-width: 2px;
+  border-color: #2563eb; /* blue-600 */
+  /* 네온 발광 효과: 하단에만 파란색 glow */
+  box-shadow:
+    0 0 0 2px #2563eb33, /* 기존 포커스 효과 */
+    0 4px 20px 2px #3b82f6cc; /* 하단 네온 glow */
 }

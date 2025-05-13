@@ -1,6 +1,9 @@
 import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import Link from 'next/link'
+import { ReactNode } from 'react'
+import ScrollToTopButton from './components/ScrollToTopButton'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -12,11 +15,31 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="ko" suppressHydrationWarning>
+      <body className="bg-gray-900 text-white min-h-screen flex flex-col items-center">
+        {/* 메뉴바 */}
+        <nav className="w-[95vw] flex items-center justify-between py-4 px-6 bg-gray-800 rounded-b-lg shadow-md mt-4 mb-8">
+          <Link href="/" className="text-2xl font-bold tracking-tight hover:text-green-400 transition">Smart Dividend Portfolio</Link>
+          <div className="flex gap-8 text-lg font-medium">
+            <Link href="/input" className="hover:text-green-400 transition">자료입력</Link>
+            <Link href="/status" className="hover:text-green-400 transition">자료현황</Link>
+            <Link href="/manage" className="hover:text-green-400 transition">자료관리</Link>
+          </div>
+        </nav>
+        {/* 본문 */}
+        <main className="flex-1 w-[95vw] flex flex-col items-start">
+          {children}
+        </main>
+        {/* Footer */}
+        <footer className="w-[95vw] text-center py-4 text-gray-300 border-t border-gray-700 mt-8">
+          Built with <span className="text-red-400">❤️</span> by 나 종 춘 | najongchoon@gmail.com
+        </footer>
+        {/* 위로가기 버튼 (클라이언트 컴포넌트) */}
+        <ScrollToTopButton />
+      </body>
     </html>
   )
 }
